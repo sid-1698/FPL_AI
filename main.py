@@ -39,9 +39,11 @@ def main(argv):
     writer.write(players,path,'Players.xlsx')
     writer.write(teams,path,'Teams.xlsx')
 
+    players_data = pd.read_excel('C:/Users/sidsu/Downloads/FPL_AI/Data/Players.xlsx',index_col=0)
+    cnt = 0
     for ind,row in players.iterrows():
 
-        flag = global_merger.check(row['Name'],argv[1])
+        [flag,players_data] = global_merger.check(row['Name'],argv[1],players_data)
 
         url = 'https://fbref.com'+row['Url']
         api = "https://fantasy.premierleague.com/api/element-summary/"+str(row['Id'])+'/'
@@ -64,12 +66,14 @@ def main(argv):
 
             writer.write(player_data,path+'Individual_Player_Data/',row['Name'].replace(' ','_')+'.xlsx',0)
     
-            global_merger.update(row['Name'].replace(' ','_'),player_data,flag)
+            global_merger.update(row['Name'].replace(' ','_')+'.xlsx',player_data,flag,cnt)
+            cnt += 1
 
         else:
             players = players.drop(ind,axis=0)
 
     writer.write(players,path,"Players.xlsx")
+    writer.write(players_data,'C:/Users/sidsu/Downloads/FPL_AI/Data/','Players.xlsx',1)
 
 if __name__ == "__main__":
     main(sys.argv)
