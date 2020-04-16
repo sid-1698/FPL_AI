@@ -6,6 +6,8 @@ import writer
 def check(player_name,season,data):
     if player_name in data['Name'].values:
         ind = data[data['Name'] == player_name].index[0]
+        if season in data.loc[ind,'Seasons']:
+            return [2,data]
         data.loc[ind,'Seasons'] = str(data.loc[ind,'Seasons']) + season + ' | '
         data.loc[ind,'Total'] = data.loc[ind,'Total'] + 1
         return [1,data]
@@ -16,14 +18,12 @@ def check(player_name,season,data):
         return [0,data]
 
 
-def update(file,data,flag,cnt):
-    path = 'C:/Users/sidsu/Downloads/FPL_AI/Data/Master_Data/'
+def update(existing_data,data,flag):
     if flag == 0:
-        writer.write(data,path,file,cnt)
-    else:
-        existing_data = pd.read_excel(path+file,index_col=0)
+        return data
+    elif flag == 1:
         new_data = pd.concat([existing_data,data],ignore_index = True)
-        writer.write(new_data,path,file,cnt)
+        return new_data
     
 
 
